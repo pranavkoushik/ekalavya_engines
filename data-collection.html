@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Collection Agent</title>
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #45a049;
+            --accent-color: #81c784;
+            --background-dark: #1a1a2e;
+            --card-background: #2d2d44;
+            --text-primary: #fff;
+            --text-secondary: #81c784;
+            --text-muted: #a5d6a7;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: var(--background-dark);
+            color: var(--text-primary);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .etl-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .controls-panel {
+            background-color: var(--card-background);
+            border-radius: 15px;
+            padding: 1.5rem;
+            height: fit-content;
+        }
+
+        .data-panel {
+            background-color: var(--card-background);
+            border-radius: 15px;
+            padding: 1.5rem;
+            min-height: 500px;
+        }
+
+        .control-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .control-group label {
+            display: block;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 5px;
+            background-color: var(--background-dark);
+            border: 1px solid var(--accent-color);
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .button {
+            background-color: var(--primary-color);
+            color: var(--text-primary);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+
+        .button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+
+        .nav-button {
+            background-color: var(--card-background);
+            color: var(--text-primary);
+            border: 1px solid var(--accent-color);
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-color);
+            color: var(--background-dark);
+        }
+
+        #dataPreview {
+            width: 100%;
+            height: 300px;
+            background-color: var(--background-dark);
+            border: 1px solid var(--accent-color);
+            border-radius: 5px;
+            padding: 1rem;
+            color: var(--text-primary);
+            font-family: monospace;
+            overflow: auto;
+        }
+
+        .status {
+            padding: 1rem;
+            border-radius: 5px;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .success {
+            background-color: rgba(76, 175, 80, 0.2);
+            border: 1px solid var(--primary-color);
+            display: block;
+        }
+
+        .error {
+            background-color: rgba(244, 67, 54, 0.2);
+            border: 1px solid #f44336;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-buttons">
+            <button class="nav-button" onclick="location.href='index.html'">← Back to Home</button>
+            <button class="nav-button" onclick="location.href='data-processing.html'">Go to Data Processing →</button>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <img src="images/1.png" alt="Data Collection Agent Logo" style="max-width: 150px; height: auto;">
+            <h2 style="color: var(--text-secondary);">Data Collection Agent</h2>
+        </div>
+
+        <div class="etl-grid">
+            <div class="controls-panel">
+                <div class="control-group">
+                    <label for="dataSource">Data Source</label>
+                    <select id="dataSource">
+                        <option value="file">File Upload</option>
+                        <option value="database">Database Connection</option>
+                        <option value="api">API Endpoint</option>
+                        <option value="stream">Data Stream</option>
+                    </select>
+                </div>
+
+                <div class="control-group" id="fileUpload">
+                    <label for="file">Upload File</label>
+                    <input type="file" id="file" accept=".csv,.json,.xlsx">
+                </div>
+
+                <div class="control-group" id="dbConnection" style="display: none;">
+                    <label for="dbUrl">Database URL</label>
+                    <input type="text" id="dbUrl" placeholder="jdbc:postgresql://localhost:5432/db">
+                    <label for="dbUser">Username</label>
+                    <input type="text" id="dbUser">
+                    <label for="dbPassword">Password</label>
+                    <input type="password" id="dbPassword">
+                </div>
+
+                <div class="control-group" id="apiEndpoint" style="display: none;">
+                    <label for="apiUrl">API URL</label>
+                    <input type="text" id="apiUrl" placeholder="https://api.example.com/data">
+                    <label for="apiKey">API Key</label>
+                    <input type="text" id="apiKey">
+                </div>
+
+                <div class="control-group">
+                    <label for="transformations">Data Transformations</label>
+                    <select id="transformations" multiple>
+                        <option value="clean">Clean Missing Values</option>
+                        <option value="normalize">Normalize Data</option>
+                        <option value="format">Format Dates</option>
+                        <option value="filter">Filter Rows</option>
+                    </select>
+                </div>
+
+                <button class="button" onclick="collectData()">Start Collection</button>
+                <button class="button" onclick="previewData()">Preview Data</button>
+                <button class="button" onclick="saveConfiguration()">Save Configuration</button>
+            </div>
+
+            <div class="data-panel">
+                <h3>Data Preview</h3>
+                <pre id="dataPreview">No data loaded yet...</pre>
+                <div id="status" class="status"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Handle data source change
+        document.getElementById('dataSource').addEventListener('change', function(e) {
+            const fileUpload = document.getElementById('fileUpload');
+            const dbConnection = document.getElementById('dbConnection');
+            const apiEndpoint = document.getElementById('apiEndpoint');
+
+            fileUpload.style.display = 'none';
+            dbConnection.style.display = 'none';
+            apiEndpoint.style.display = 'none';
+
+            switch(e.target.value) {
+                case 'file':
+                    fileUpload.style.display = 'block';
+                    break;
+                case 'database':
+                    dbConnection.style.display = 'block';
+                    break;
+                case 'api':
+                    apiEndpoint.style.display = 'block';
+                    break;
+            }
+        });
+
+        // Mock data collection
+        function collectData() {
+            const status = document.getElementById('status');
+            status.className = 'status';
+            status.textContent = 'Collecting data...';
+
+            setTimeout(() => {
+                status.className = 'status success';
+                status.textContent = 'Data collection completed successfully!';
+                previewData();
+            }, 2000);
+        }
+
+        // Mock data preview
+        function previewData() {
+            const preview = document.getElementById('dataPreview');
+            const sampleData = {
+                "columns": ["id", "name", "value", "timestamp"],
+                "data": [
+                    [1, "Sample A", 42.5, "2025-01-09T12:00:00"],
+                    [2, "Sample B", 37.8, "2025-01-09T12:01:00"],
+                    [3, "Sample C", 45.2, "2025-01-09T12:02:00"]
+                ]
+            };
+            preview.textContent = JSON.stringify(sampleData, null, 2);
+        }
+
+        // Save configuration
+        function saveConfiguration() {
+            const status = document.getElementById('status');
+            status.className = 'status success';
+            status.textContent = 'Configuration saved successfully!';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+question,intent
+what are the total sales,total_sales
+show me total sales,total_sales
+what is the total revenue,total_sales
+total revenue please,total_sales
+what were the sales this month,monthly_sales
+show monthly sales,monthly_sales
+how much did we sell this month,monthly_sales
+this month's sales,monthly_sales
+what is the average sale value,average
+show me the average sales,average
+what's the mean sale amount,average
+average transaction value,average
+show sales trend,trend
+what's the sales trend,trend
+how are sales trending,trend
+display trend analysis,trend
+analyze the trend,trend

@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Data Chatbot</title>
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: {
+                curve: 'basis'
+            }
+        });
+    </script>
+    <style>
+        :root {
+            --primary-color: #6A1B9A;
+            --secondary-color: #4A148C;
+            --accent-color: #9C27B0;
+            --background-dark: #1a1a2e;
+            --card-background: #2d2d44;
+            --text-primary: #fff;
+            --text-secondary: #E1BEE7;
+            --text-muted: #CE93D8;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: var(--background-dark);
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            margin: 0 auto;
+            max-width: 1400px;
+            padding: 2rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+
+        .nav-button {
+            background-color: var(--card-background);
+            color: var(--text-primary);
+            border: 1px solid var(--accent-color);
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-color);
+            color: var(--background-dark);
+        }
+
+        .chat-interface {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+            flex-grow: 1;
+        }
+
+        .controls-panel {
+            background-color: var(--card-background);
+            border-radius: 15px;
+            padding: 1.5rem;
+            height: fit-content;
+        }
+
+        .chat-panel {
+            background-color: var(--card-background);
+            border-radius: 15px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .control-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .control-group label {
+            display: block;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 5px;
+            background-color: var(--background-dark);
+            border: 1px solid var(--accent-color);
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .button {
+            background-color: var(--primary-color);
+            color: var(--text-primary);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+
+        .button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background-color: var(--background-dark);
+            border-radius: 10px;
+        }
+
+        .message {
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            max-width: 80%;
+        }
+
+        .user-message {
+            margin-left: auto;
+            background-color: var(--primary-color);
+        }
+
+        .bot-message {
+            margin-right: auto;
+            background-color: var(--card-background);
+            border: 1px solid var(--accent-color);
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .chat-input input {
+            flex-grow: 1;
+            border-radius: 5px;
+        }
+
+        .chat-input button {
+            width: auto;
+            margin: 0;
+        }
+
+        .visualization {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: var(--background-dark);
+            border-radius: 10px;
+            display: none;
+        }
+
+        .dataset-info {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: rgba(106, 27, 154, 0.1);
+            border-radius: 5px;
+            border: 1px solid var(--accent-color);
+        }
+
+        .dataset-info h4 {
+            margin-top: 0;
+            color: var(--text-secondary);
+        }
+
+        .dataset-info p {
+            margin: 0.5rem 0;
+        }
+
+        #reportContainer {
+            display: none;
+            margin-top: 2rem;
+        }
+
+        #reportContainer.hidden {
+            display: none;
+        }
+
+        .report-section {
+            margin-bottom: 2rem;
+        }
+
+        .report-section h3 {
+            margin-top: 0;
+        }
+
+        .mermaid {
+            width: 100%;
+            height: 300px;
+            border-radius: 10px;
+            background-color: var(--background-dark);
+            padding: 1rem;
+        }
+
+        .visualization-item {
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-buttons">
+            <button class="nav-button" onclick="location.href='index.html'">← Back to Home</button>
+            <button class="nav-button" onclick="location.href='visualization.html'">Go to Visualization →</button>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <img src="images/7.png" alt="AI Chatbot Logo" style="max-width: 150px; height: auto;">
+            <h2 style="color: var(--text-secondary);">AI Data Chatbot</h2>
+        </div>
+
+        <div class="chat-interface">
+            <div class="controls-panel">
+                <div class="control-group">
+                    <label for="dataFile">Upload Dataset</label>
+                    <input type="file" id="dataFile" accept=".csv">
+                </div>
+
+                <div class="control-group">
+                    <label for="dataType">Data Type</label>
+                    <select id="dataType">
+                        <option value="sales">Sales Data</option>
+                        <option value="financial">Financial Data</option>
+                        <option value="inventory">Inventory Data</option>
+                        <option value="custom">Custom Data</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="modelType">Analysis Model</label>
+                    <select id="modelType">
+                        <option value="basic">Basic Analysis</option>
+                        <option value="advanced">Advanced Analysis</option>
+                        <option value="predictive">Predictive Analysis</option>
+                    </select>
+                </div>
+
+                <button class="button" onclick="trainModel()">Train Model</button>
+                <button class="button" onclick="clearChat()">Clear Chat</button>
+
+                <div class="dataset-info" id="datasetInfo">
+                    <h4>Dataset Information</h4>
+                    <p>No dataset loaded</p>
+                </div>
+            </div>
+
+            <div class="chat-panel">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message bot-message">
+                        Hello! I'm your AI Data Assistant. Please upload a dataset and I'll help you analyze it.
+                    </div>
+                </div>
+
+                <div class="visualization" id="visualization"></div>
+
+                <div class="chat-input">
+                    <input type="text" id="userInput" placeholder="Ask me about your data..." onkeypress="if(event.key === 'Enter') sendMessage()">
+                    <button class="button" onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="reportContainer" class="hidden">
+        <h2>Analysis Report</h2>
+        <div class="report-section">
+            <h3>Executive Summary</h3>
+            <div id="executiveSummary"></div>
+        </div>
+        <div class="report-section">
+            <h3>Data Flow</h3>
+            <div id="flowchartContainer" class="mermaid"></div>
+        </div>
+        <div class="report-section">
+            <h3>Detailed Analysis</h3>
+            <div id="detailedAnalysis"></div>
+        </div>
+        <div class="report-section">
+            <h3>Visualizations</h3>
+            <div id="visualizationsContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentDataset = null;
+        let datasetSummary = null;
+        let parsedData = null;
+
+        // Handle file upload
+        document.getElementById('dataFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const csvData = e.target.result;
+                processData(csvData);
+            };
+            reader.readAsText(file);
+        });
+
+        function processData(csvData) {
+            const lines = csvData.split('\n');
+            const headers = lines[0].split(',').map(h => h.trim());
+            const data = [];
+            
+            // Parse CSV data
+            for (let i = 1; i < lines.length; i++) {
+                if (lines[i].trim() === '') continue;
+                const values = lines[i].split(',').map(v => v.trim());
+                const row = {};
+                headers.forEach((header, index) => {
+                    row[header] = values[index];
+                });
+                data.push(row);
+            }
+
+            parsedData = data;
+            currentDataset = true;
+            datasetSummary = {
+                headers: headers,
+                rowCount: data.length,
+                data: data
+            };
+
+            updateDatasetInfo();
+            addBotMessage("Dataset loaded successfully! I can now help you analyze this data. Try asking me about statistics, trends, or specific columns!");
+        }
+
+        function updateDatasetInfo() {
+            if (!datasetSummary) {
+                document.getElementById('datasetInfo').innerHTML = `
+                    <h4>Dataset Information</h4>
+                    <p>No dataset loaded</p>
+                `;
+                return;
+            }
+
+            let columnStats = '';
+            datasetSummary.headers.forEach(header => {
+                const values = datasetSummary.data.map(row => row[header]);
+                const numericValues = values.filter(v => !isNaN(v)).map(Number);
+                
+                if (numericValues.length > 0) {
+                    const avg = numericValues.reduce((a, b) => a + b, 0) / numericValues.length;
+                    const max = Math.max(...numericValues);
+                    const min = Math.min(...numericValues);
+                    columnStats += `<p><strong>${header}:</strong> Avg: ${avg.toFixed(2)}, Min: ${min}, Max: ${max}</p>`;
+                }
+            });
+
+            document.getElementById('datasetInfo').innerHTML = `
+                <h4>Dataset Information</h4>
+                <p>Number of Rows: ${datasetSummary.rowCount}</p>
+                <p>Columns: ${datasetSummary.headers.join(', ')}</p>
+                <h4>Column Statistics:</h4>
+                ${columnStats}
+            `;
+        }
+
+        function analyzeData(question) {
+            if (!parsedData || parsedData.length === 0) {
+                return "Please upload a dataset first!";
+            }
+
+            question = question.toLowerCase();
+            let response = "";
+
+            // Handle different types of analysis questions
+            if (question.includes('average') || question.includes('mean')) {
+                const column = findColumnInQuestion(question);
+                if (column) {
+                    const avg = calculateAverage(column);
+                    response = `The average ${column} is ${avg.toFixed(2)}`;
+                    showColumnVisualization(column);
+                } else {
+                    response = "Which column would you like to find the average for?";
+                }
+            }
+            else if (question.includes('maximum') || question.includes('highest')) {
+                const column = findColumnInQuestion(question);
+                if (column) {
+                    const max = findMaxValue(column);
+                    response = `The maximum ${column} is ${max}`;
+                    showColumnVisualization(column);
+                } else {
+                    response = "Which column would you like to find the maximum for?";
+                }
+            }
+            else if (question.includes('minimum') || question.includes('lowest')) {
+                const column = findColumnInQuestion(question);
+                if (column) {
+                    const min = findMinValue(column);
+                    response = `The minimum ${column} is ${min}`;
+                    showColumnVisualization(column);
+                } else {
+                    response = "Which column would you like to find the minimum for?";
+                }
+            }
+            else if (question.includes('trend') || question.includes('over time')) {
+                const column = findColumnInQuestion(question);
+                if (column) {
+                    response = `Here's the trend for ${column}`;
+                    showTrendVisualization(column);
+                } else {
+                    response = "Which column would you like to see the trend for?";
+                }
+            }
+            else if (question.includes('distribution')) {
+                const column = findColumnInQuestion(question);
+                if (column) {
+                    response = `Here's the distribution of ${column}`;
+                    showDistributionVisualization(column);
+                } else {
+                    response = "Which column would you like to see the distribution for?";
+                }
+            }
+            else if (question.includes('summary') || question.includes('statistics')) {
+                const column = findColumnInQuestion(question);
+                if (column) {
+                    const stats = calculateColumnStatistics(column);
+                    response = `Statistics for ${column}:\n` +
+                              `Average: ${stats.average.toFixed(2)}\n` +
+                              `Maximum: ${stats.max}\n` +
+                              `Minimum: ${stats.min}\n` +
+                              `Total: ${stats.sum.toFixed(2)}`;
+                    showColumnVisualization(column);
+                } else {
+                    response = "Which column would you like to see the summary statistics for?";
+                }
+            }
+            else {
+                response = "I can help you analyze your data. Try asking about averages, maximums, minimums, trends, or distributions for specific columns!";
+            }
+
+            return response;
+        }
+
+        function findColumnInQuestion(question) {
+            return datasetSummary.headers.find(header => 
+                question.includes(header.toLowerCase())
+            );
+        }
+
+        function calculateAverage(column) {
+            const values = parsedData.map(row => parseFloat(row[column])).filter(v => !isNaN(v));
+            return values.reduce((a, b) => a + b, 0) / values.length;
+        }
+
+        function findMaxValue(column) {
+            const values = parsedData.map(row => parseFloat(row[column])).filter(v => !isNaN(v));
+            return Math.max(...values);
+        }
+
+        function findMinValue(column) {
+            const values = parsedData.map(row => parseFloat(row[column])).filter(v => !isNaN(v));
+            return Math.min(...values);
+        }
+
+        function calculateColumnStatistics(column) {
+            const values = parsedData.map(row => parseFloat(row[column])).filter(v => !isNaN(v));
+            return {
+                average: values.reduce((a, b) => a + b, 0) / values.length,
+                max: Math.max(...values),
+                min: Math.min(...values),
+                sum: values.reduce((a, b) => a + b, 0)
+            };
+        }
+
+        function showColumnVisualization(column) {
+            const viz = document.getElementById('visualization');
+            viz.style.display = 'block';
+
+            const values = parsedData.map(row => parseFloat(row[column])).filter(v => !isNaN(v));
+            const labels = Array.from({length: values.length}, (_, i) => i + 1);
+
+            const data = [{
+                x: labels,
+                y: values,
+                type: 'scatter',
+                mode: 'lines+markers',
+                name: column
+            }];
+
+            const layout = {
+                title: `${column} Values`,
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                font: { color: '#fff' },
+                xaxis: { title: 'Data Point' },
+                yaxis: { title: column }
+            };
+
+            Plotly.newPlot('visualization', data, layout);
+        }
+
+        function showTrendVisualization(column) {
+            const viz = document.getElementById('visualization');
+            viz.style.display = 'block';
+
+            const values = parsedData.map(row => parseFloat(row[column])).filter(v => !isNaN(v));
+            const movingAverage = calculateMovingAverage(values, 3);
+            const labels = Array.from({length: values.length}, (_, i) => i + 1);
+
+            const data = [
+                {
+                    x: labels,
+                    y: values,
+                    type: 'scatter',
+                    mode: 'lines',
+                    name: column
+                },
+                {
+                    x: labels,
+                    y: movingAverage,
+                    type: 'scatter',
+                    mode: 'lines',
+                    name: 'Moving Average',
+                    line: { dash: 'dot' }
+                }
+            ];
+
+            const layout = {
+                title: `${column} Trend Analysis`,
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                font: { color: '#fff' },
+                xaxis: { title: 'Data Point' },
+                yaxis: { title: column }
+            };
+
+            Plotly.newPlot('visualization', data, layout);
+        }
+
+        function showDistributionVisualization(column) {
+            const viz = document.getElementById('visualization');
+            viz.style.display = 'block';
+
+            const values = parsedData.map(row => parseFloat(row[column])).filter(v => !isNaN(v));
+
+            const data = [{
+                x: values,
+                type: 'histogram',
+                name: column,
+                nbinsx: 20
+            }];
+
+            const layout = {
+                title: `Distribution of ${column}`,
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                font: { color: '#fff' },
+                xaxis: { title: column },
+                yaxis: { title: 'Frequency' }
+            };
+
+            Plotly.newPlot('visualization', data, layout);
+        }
+
+        function calculateMovingAverage(values, window) {
+            const result = [];
+            for (let i = 0; i < values.length; i++) {
+                const start = Math.max(0, i - Math.floor(window/2));
+                const end = Math.min(values.length, i + Math.floor(window/2) + 1);
+                const windowValues = values.slice(start, end);
+                result.push(windowValues.reduce((a, b) => a + b, 0) / windowValues.length);
+            }
+            return result;
+        }
+
+        function displayReport(report) {
+            const reportContainer = document.getElementById('reportContainer');
+            const executiveSummary = document.getElementById('executiveSummary');
+            const flowchartContainer = document.getElementById('flowchartContainer');
+            const detailedAnalysis = document.getElementById('detailedAnalysis');
+            const visualizationsContainer = document.getElementById('visualizationsContainer');
+
+            // Display report sections
+            reportContainer.classList.remove('hidden');
+            
+            // Parse and display the report text
+            const reportSections = parseReportSections(report.text);
+            executiveSummary.innerHTML = reportSections.executiveSummary || '';
+            detailedAnalysis.innerHTML = reportSections.detailedAnalysis || '';
+
+            // Display flowchart
+            flowchartContainer.innerHTML = report.flowchart;
+            mermaid.init(undefined, flowchartContainer);
+
+            // Display visualizations
+            visualizationsContainer.innerHTML = '';
+            if (report.visualizations && report.visualizations.length > 0) {
+                report.visualizations.forEach(viz => {
+                    const vizElement = document.createElement('div');
+                    vizElement.className = 'visualization-item';
+                    vizElement.innerHTML = viz.html || '';
+                    visualizationsContainer.appendChild(vizElement);
+                });
+            }
+        }
+
+        function parseReportSections(reportText) {
+            const sections = {
+                executiveSummary: '',
+                detailedAnalysis: ''
+            };
+
+            const lines = reportText.split('\n');
+            let currentSection = '';
+
+            lines.forEach(line => {
+                if (line.startsWith('# Executive Summary') || line.startsWith('## Executive Summary')) {
+                    currentSection = 'executiveSummary';
+                } else if (line.startsWith('# Detailed Analysis') || line.startsWith('## Detailed Analysis')) {
+                    currentSection = 'detailedAnalysis';
+                } else if (currentSection) {
+                    sections[currentSection] += line + '\n';
+                }
+            });
+
+            // Convert markdown to HTML (you may want to use a markdown parser library)
+            return sections;
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('userInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            addUserMessage(message);
+            input.value = '';
+
+            const response = analyzeData(message);
+            setTimeout(() => {
+                addBotMessage(response);
+            }, 500);
+        }
+
+        function trainModel() {
+            if (!currentDataset) {
+                addBotMessage("Please upload a dataset first!");
+                return;
+            }
+
+            addBotMessage("Analyzing dataset patterns...");
+            
+            setTimeout(() => {
+                const numericColumns = datasetSummary.headers.filter(header => {
+                    const values = parsedData.map(row => row[header]);
+                    return values.some(v => !isNaN(v));
+                });
+
+                let insights = "I've analyzed the dataset and found:\n";
+                numericColumns.forEach(column => {
+                    const stats = calculateColumnStatistics(column);
+                    insights += `- ${column}: Average=${stats.average.toFixed(2)}, Range=${stats.min}-${stats.max}\n`;
+                });
+
+                addBotMessage(insights);
+            }, 1500);
+        }
+
+        function addUserMessage(message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message user-message';
+            messageDiv.textContent = message;
+            document.getElementById('chatMessages').appendChild(messageDiv);
+            messageDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function addBotMessage(message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message bot-message';
+            messageDiv.textContent = message;
+            document.getElementById('chatMessages').appendChild(messageDiv);
+            messageDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function clearChat() {
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML = '<div class="message bot-message">Chat cleared. How can I help you analyze your data?</div>';
+            document.getElementById('visualization').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

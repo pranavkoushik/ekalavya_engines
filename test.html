@@ -230,137 +230,134 @@
 </head>
 <body class="dark-theme">
 
-    <nav>
-        <div class="navbar-container" style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 0 20px;">
-          <div class="navbar-left">
-            <img src="" alt="Logo" id="logo-placeholder"> <!-- Placeholder for Logo -->
-            <h2>Ekalavya Engines</h2>
-          </div>
+  <nav>
+    <div class="navbar-container" style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 0 20px;">
+      <div class="navbar-left">
+        <img src="" alt="Logo" id="logo-placeholder"> <!-- Placeholder for Logo -->
+        <h2>Ekalavya Engines</h2>
+      </div>
+      
+      <!-- Centered Info button -->
+      <div class="navbar-center" style="flex-grow: 1; text-align: center;">
+        <button id="infoButton" style="margin-top: 1cm; padding: 15px 30px; font-size: 1.5em;">Info</button>
+      </div>
+  
+      <div class="navbar-right">
+        <!-- File upload and submit section -->
+        <div class="file-upload">
+          <button id="browseButton" onclick="showFileOptions()">Browse</button>
           
-          <!-- Centered Info button -->
-          <div class="navbar-center" style="flex-grow: 1; text-align: center;">
-            <button id="infoButton" style="margin-top: 1cm; padding: 15px 30px; font-size: 1.5em;">Info</button>
-          </div>
-      
-          <div class="navbar-right">
-            <!-- File upload and submit section -->
-            <div class="file-upload">
-              <button id="browseButton" onclick="showFileOptions()">Browse</button>
-              
-              <!-- Dropdown for file type selection -->
-              <select id="fileType" style="display:none;" onchange="handleFileTypeChange()">
-                <option value="">Select File Type</option>
-                <option value="csv">CSV</option>
-                <option value="excel">Excel</option>
-                <option value="json">JSON</option>
-                <option value="api">API</option>
-              </select>
-      
-              <!-- Local file selection input (hidden initially) -->
-              <input type="file" id="fileUpload" style="display:none;" accept=".csv, .xlsx, .xls, .json" onchange="handleFileUpload()">
-              
-              <!-- API endpoint input (hidden initially) -->
-              <input type="text" id="apiEndpoint" style="display:none;" placeholder="Enter API endpoint" onchange="handleAPIEndpoint()">
-              
-              <!-- Display selected path -->
-              <div id="selectedPathDisplay" style="display:none;"></div>
-      
-              <!-- Submit button (hidden initially) -->
-              <button id="submitButton" style="display:none;" onclick="submitFile()">Submit</button>
-            </div>
-      
-            <!-- Mode Toggle Button -->
-            <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
-          </div>
+          <!-- Dropdown for file type selection -->
+          <select id="fileType" style="display:none;" onchange="handleFileTypeChange()">
+            <option value="">Select File Type</option>
+            <option value="csv">CSV</option>
+            <option value="excel">Excel</option>
+            <option value="json">JSON</option>
+            <option value="api">API</option>
+          </select>
+  
+          <!-- Local file selection input (hidden initially) -->
+          <input type="file" id="fileUpload" style="display:none;" accept=".csv, .xlsx, .xls, .json" onchange="handleFileUpload()">
+          
+          <!-- API endpoint input (hidden initially) -->
+          <input type="text" id="apiEndpoint" style="display:none;" placeholder="Enter API endpoint" onchange="handleAPIEndpoint()">
+          
+          <!-- Display selected path -->
+          <div id="selectedPathDisplay" style="display:none;"></div>
+  
+          <!-- Submit button (hidden initially) -->
+          <button id="submitButton" style="display:none;" onclick="submitFile()">Submit</button>
         </div>
-      </nav>
-      
-      <script>
-        let selectedPath = ''; // Store selected file or API endpoint
-      
-        // Show the options when Browse is clicked
-        function showFileOptions() {
-          document.getElementById('browseButton').style.display = 'none';  // Hide "Browse" button
-          document.getElementById('fileType').style.display = 'inline';    // Show file type dropdown
-        }
-      
-        // Handle the selection of file type
-        function handleFileTypeChange() {
-          const fileType = document.getElementById('fileType').value;
-          const fileUpload = document.getElementById('fileUpload');
-          const apiEndpointInput = document.getElementById('apiEndpoint');
-          const selectedPathDisplay = document.getElementById('selectedPathDisplay');
-          const submitButton = document.getElementById('submitButton');
-      
-          // Reset fields first
-          selectedPath = '';
-          selectedPathDisplay.style.display = 'none';
-          submitButton.style.display = 'none'; // Hide Submit button
-      
-          if (fileType === 'api') {
-            fileUpload.style.display = 'none'; // Hide file upload
-            apiEndpointInput.style.display = 'inline'; // Show API endpoint input
-          } else {
-            apiEndpointInput.style.display = 'none'; // Hide API input
-            fileUpload.style.display = 'inline'; // Show file upload
-          }
-        }
-      
-        // Handle file upload (for CSV, Excel, JSON)
-        function handleFileUpload() {
-          const fileInput = document.getElementById('fileUpload');
-          const file = fileInput.files[0];
-          if (file) {
-            selectedPath = file.name;
-            document.getElementById('selectedPathDisplay').textContent = `Selected file: ${selectedPath}`;
-            document.getElementById('selectedPathDisplay').style.display = 'block';
-            document.getElementById('submitButton').style.display = 'inline'; // Show Submit button
-          }
-        }
-      
-        // Handle API endpoint input
-        function handleAPIEndpoint() {
-          const apiInput = document.getElementById('apiEndpoint').value;
-          if (apiInput) {
-            selectedPath = apiInput;
-            document.getElementById('selectedPathDisplay').textContent = `Selected API: ${selectedPath}`;
-            document.getElementById('selectedPathDisplay').style.display = 'block';
-            document.getElementById('submitButton').style.display = 'inline'; // Show Submit button
-          }
-        }
-      
-        // Handle submit action
-        function submitFile() {
-          alert(`Submitted: ${selectedPath}`);
-          // Redirect to progress2.html after submission
-          window.location.href = 'progress.html';
-        }
-      
-        // Toggle between light and dark theme
-        function toggleTheme() {
-          const body = document.body;
-          const themeToggle = document.querySelector('.theme-toggle');
-      
-          if (body.classList.contains('dark-theme')) {
-            body.classList.remove('dark-theme');
-            body.classList.add('light-theme');
-            themeToggle.textContent = '🌙'; // Switch to dark theme
-          } else {
-            body.classList.remove('light-theme');
-            body.classList.add('dark-theme');
-            themeToggle.textContent = '🌞'; // Switch to light theme
-          }
-        }
-      </script>
-      
-      
-      
-<!-- Heading Section -->
-<h1>Multi-Agent AI Data Analyst for Comprehensive Data Analysis and Reporting</h1>
+  
+        <!-- Mode Toggle Button -->
+        <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+      </div>
+    </div>
+  </nav>
+  
+  <script>
+    let selectedPath = ''; // Store selected file or API endpoint
+  
+    // Show the options when Browse is clicked
+    function showFileOptions() {
+      document.getElementById('browseButton').style.display = 'none';  // Hide "Browse" button
+      document.getElementById('fileType').style.display = 'inline';    // Show file type dropdown
+    }
+  
+    // Handle the selection of file type
+    function handleFileTypeChange() {
+      const fileType = document.getElementById('fileType').value;
+      const fileUpload = document.getElementById('fileUpload');
+      const apiEndpointInput = document.getElementById('apiEndpoint');
+      const selectedPathDisplay = document.getElementById('selectedPathDisplay');
+      const submitButton = document.getElementById('submitButton');
+  
+      // Reset fields first
+      selectedPath = '';
+      selectedPathDisplay.style.display = 'none';
+      submitButton.style.display = 'none'; // Hide Submit button
+  
+      if (fileType === 'api') {
+        fileUpload.style.display = 'none'; // Hide file upload
+        apiEndpointInput.style.display = 'inline'; // Show API endpoint input
+      } else {
+        apiEndpointInput.style.display = 'none'; // Hide API input
+        fileUpload.style.display = 'inline'; // Show file upload
+      }
+    }
+  
+    // Handle file upload (for CSV, Excel, JSON)
+    function handleFileUpload() {
+      const fileInput = document.getElementById('fileUpload');
+      const file = fileInput.files[0];
+      if (file) {
+        selectedPath = file.name;
+        document.getElementById('selectedPathDisplay').textContent = `Selected file: ${selectedPath}`;
+        document.getElementById('selectedPathDisplay').style.display = 'block';
+        document.getElementById('submitButton').style.display = 'inline'; // Show Submit button
+      }
+    }
+  
+    // Handle API endpoint input
+    function handleAPIEndpoint() {
+      const apiInput = document.getElementById('apiEndpoint').value;
+      if (apiInput) {
+        selectedPath = apiInput;
+        document.getElementById('selectedPathDisplay').textContent = `Selected API: ${selectedPath}`;
+        document.getElementById('selectedPathDisplay').style.display = 'block';
+        document.getElementById('submitButton').style.display = 'inline'; // Show Submit button
+      }
+    }
+  
+    // Handle submit action
+    function submitFile() {
+      alert(`Submitted: ${selectedPath}`);
+      // Redirect to progress2.html after submission
+      window.location.href = 'progress.html';
+    }
+  
+    // Toggle between light and dark theme
+    function toggleTheme() {
+      const body = document.body;
+      const themeToggle = document.querySelector('.theme-toggle');
+  
+      if (body.classList.contains('dark-theme')) {
+        body.classList.remove('dark-theme');
+        body.classList.add('light-theme');
+        themeToggle.textContent = '🌙'; // Switch to dark theme
+      } else {
+        body.classList.remove('light-theme');
+        body.classList.add('dark-theme');
+        themeToggle.textContent = '🌞'; // Switch to light theme
+      }
+    }
+  </script>
+  
+  <!-- Heading Section -->
+  <h1>Multi-Agent AI Data Analyst for Comprehensive Data Analysis and Reporting</h1>
 
-
-<!-- Button Container -->
-<div class="button-group">
+  <!-- Button Container -->
+  <div class="button-group">
     <!-- Agent Boxes -->
     <div class="agent-box">
       <img src="agent1.jpg" alt="Input Data Agent Image"> <!-- Image Placeholder -->
@@ -395,15 +392,6 @@
       <p>Data/BI Analyst</p>
       <p>Data Engineers</p>
       <p>Applies advanced analytics techniques on the data to extract meaningful insights.</p>
-      <button class="view-button">View</button>
-    </div>
-  
-    <div class="agent-box">
-      <img src="agent5.jpg" alt="Visualization Agent Image"> <!-- Image Placeholder -->
-      <h3>Visualization Agent</h3>
-      <p>Business Analyst</p>
-      <p>Data Analyst</p>
-      <p>Creates visualizations like charts and graphs to simplify complex data for end-users.</p>
       <button class="view-button">View</button>
     </div>
   

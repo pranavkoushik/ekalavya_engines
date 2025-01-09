@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Agent</title>
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <style>
+        :root {
+            --primary-color: #00BCD4;
+            --secondary-color: #0097A7;
+            --accent-color: #4DD0E1;
+            --background-dark: #1a1a2e;
+            --card-background: #2d2d44;
+            --text-primary: #fff;
+            --text-secondary: #4DD0E1;
+            --text-muted: #80DEEA;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: var(--background-dark);
+            color: var(--text-primary);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .report-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .controls-panel {
+            background-color: var(--card-background);
+            border-radius: 15px;
+            padding: 1.5rem;
+            height: fit-content;
+        }
+
+        .preview-panel {
+            background-color: var(--card-background);
+            border-radius: 15px;
+            padding: 1.5rem;
+            min-height: 500px;
+        }
+
+        .control-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .control-group label {
+            display: block;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 5px;
+            background-color: var(--background-dark);
+            border: 1px solid var(--accent-color);
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .button {
+            background-color: var(--primary-color);
+            color: var(--text-primary);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+
+        .button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+
+        .nav-button {
+            background-color: var(--card-background);
+            color: var(--text-primary);
+            border: 1px solid var(--accent-color);
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-color);
+            color: var(--background-dark);
+        }
+
+        #reportPreview {
+            width: 100%;
+            height: 500px;
+            background-color: var(--background-dark);
+            border: 1px solid var(--accent-color);
+            border-radius: 5px;
+            padding: 1rem;
+            color: var(--text-primary);
+            font-family: Arial, sans-serif;
+            overflow: auto;
+        }
+
+        .report-section {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background-color: rgba(0, 188, 212, 0.1);
+            border-radius: 5px;
+        }
+
+        .report-section h2 {
+            color: var(--text-secondary);
+            margin-top: 0;
+        }
+
+        .chart-placeholder {
+            width: 100%;
+            height: 200px;
+            background-color: rgba(0, 188, 212, 0.2);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 1rem 0;
+        }
+
+        .status {
+            padding: 1rem;
+            border-radius: 5px;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .success {
+            background-color: rgba(0, 188, 212, 0.2);
+            border: 1px solid var(--primary-color);
+            display: block;
+        }
+
+        .error {
+            background-color: rgba(244, 67, 54, 0.2);
+            border: 1px solid #f44336;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-buttons">
+            <button class="nav-button" onclick="location.href='nlp.html'">← Back to NLP</button>
+            <button class="nav-button" onclick="location.href='visualization.html'">Go to Visualization →</button>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <img src="images/5.png" alt="Report Agent Logo" style="max-width: 150px; height: auto;">
+            <h2 style="color: var(--text-secondary);">Report Agent</h2>
+        </div>
+
+        <div class="report-grid">
+            <div class="controls-panel">
+                <div class="control-group">
+                    <label for="reportType">Report Type</label>
+                    <select id="reportType">
+                        <option value="executive">Executive Summary</option>
+                        <option value="technical">Technical Report</option>
+                        <option value="analysis">Analysis Report</option>
+                        <option value="dashboard">Interactive Dashboard</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="sections">Report Sections</label>
+                    <select id="sections" multiple>
+                        <option value="summary">Executive Summary</option>
+                        <option value="methodology">Methodology</option>
+                        <option value="findings">Key Findings</option>
+                        <option value="visualizations">Visualizations</option>
+                        <option value="recommendations">Recommendations</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="format">Output Format</label>
+                    <select id="format">
+                        <option value="html">HTML</option>
+                        <option value="pdf">PDF</option>
+                        <option value="docx">Word Document</option>
+                        <option value="pptx">PowerPoint</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="template">Report Template</label>
+                    <select id="template">
+                        <option value="modern">Modern Clean</option>
+                        <option value="classic">Classic Professional</option>
+                        <option value="minimal">Minimal</option>
+                        <option value="data">Data-Focused</option>
+                    </select>
+                </div>
+
+                <button class="button" onclick="generateReport()">Generate Report</button>
+                <button class="button" onclick="previewReport()">Preview Report</button>
+                <button class="button" onclick="exportReport()">Export Report</button>
+            </div>
+
+            <div class="preview-panel">
+                <h3>Report Preview</h3>
+                <div id="reportPreview">
+                    <div class="report-section">
+                        <h2>Executive Summary</h2>
+                        <p>Loading report preview...</p>
+                    </div>
+                </div>
+                <div id="status" class="status"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function generateReport() {
+            const status = document.getElementById('status');
+            const preview = document.getElementById('reportPreview');
+            
+            status.className = 'status';
+            status.textContent = 'Generating report...';
+            
+            setTimeout(() => {
+                preview.innerHTML = `
+                    <div class="report-section">
+                        <h2>Executive Summary</h2>
+                        <p>This report presents a comprehensive analysis of the data collected and processed through the Eklavya Engines platform. Key findings indicate significant trends in user behavior and system performance.</p>
+                    </div>
+                    
+                    <div class="report-section">
+                        <h2>Methodology</h2>
+                        <p>The analysis was conducted using advanced machine learning algorithms and statistical methods. Data was collected over a period of 30 days and processed using our proprietary AI engines.</p>
+                        <div class="chart-placeholder">Methodology Flowchart</div>
+                    </div>
+                    
+                    <div class="report-section">
+                        <h2>Key Findings</h2>
+                        <ul>
+                            <li>85% increase in processing efficiency</li>
+                            <li>Reduced error rates by 60%</li>
+                            <li>Improved user satisfaction scores by 45%</li>
+                        </ul>
+                        <div class="chart-placeholder">Performance Metrics Chart</div>
+                    </div>
+                    
+                    <div class="report-section">
+                        <h2>Recommendations</h2>
+                        <ol>
+                            <li>Implement automated scaling based on load patterns</li>
+                            <li>Enhance real-time monitoring capabilities</li>
+                            <li>Develop additional AI models for specific use cases</li>
+                        </ol>
+                    </div>
+                `;
+                
+                status.className = 'status success';
+                status.textContent = 'Report generated successfully!';
+            }, 2000);
+        }
+
+        function previewReport() {
+            const status = document.getElementById('status');
+            status.className = 'status success';
+            status.textContent = 'Preview updated!';
+        }
+
+        function exportReport() {
+            const status = document.getElementById('status');
+            const format = document.getElementById('format').value;
+            status.className = 'status success';
+            status.textContent = `Report exported as ${format.toUpperCase()} successfully!`;
+        }
+    </script>
+</body>
+</html>

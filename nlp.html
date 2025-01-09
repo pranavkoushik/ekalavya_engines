@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NLP Agent</title>
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <style>
+        :root {
+            --primary-color: #FF5722;
+            --secondary-color: #F4511E;
+            --accent-color: #FF8A65;
+            --background-dark: #1a1a2e;
+            --card-background: #2d2d44;
+            --text-primary: #fff;
+            --text-secondary: #FF8A65;
+            --text-muted: #FFAB91;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: var(--background-dark);
+            color: var(--text-primary);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .nlp-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .controls-panel {
+            background-color: var(--card-background);
+            border-radius: 15px;
+            padding: 1.5rem;
+            height: fit-content;
+        }
+
+        .analysis-panel {
+            background-color: var(--card-background);
+            border-radius: 15px;
+            padding: 1.5rem;
+            min-height: 500px;
+        }
+
+        .control-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .control-group label {
+            display: block;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 5px;
+            background-color: var(--background-dark);
+            border: 1px solid var(--accent-color);
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .button {
+            background-color: var(--primary-color);
+            color: var(--text-primary);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+
+        .button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+
+        .nav-button {
+            background-color: var(--card-background);
+            color: var(--text-primary);
+            border: 1px solid var(--accent-color);
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-color);
+            color: var(--background-dark);
+        }
+
+        #analysisResults {
+            width: 100%;
+            height: 300px;
+            background-color: var(--background-dark);
+            border: 1px solid var(--accent-color);
+            border-radius: 5px;
+            padding: 1rem;
+            color: var(--text-primary);
+            font-family: monospace;
+            overflow: auto;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            margin: 0.2rem;
+            border-radius: 3px;
+            background-color: var(--accent-color);
+            color: var(--background-dark);
+        }
+
+        .entity {
+            padding: 0.2rem;
+            margin: 0.2rem;
+            border-radius: 3px;
+        }
+
+        .entity-person { background-color: rgba(255, 87, 34, 0.2); }
+        .entity-org { background-color: rgba(255, 138, 101, 0.2); }
+        .entity-location { background-color: rgba(255, 171, 145, 0.2); }
+
+        .status {
+            padding: 1rem;
+            border-radius: 5px;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .success {
+            background-color: rgba(255, 87, 34, 0.2);
+            border: 1px solid var(--primary-color);
+            display: block;
+        }
+
+        .error {
+            background-color: rgba(244, 67, 54, 0.2);
+            border: 1px solid #f44336;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-buttons">
+            <button class="nav-button" onclick="location.href='query.html'">← Back to Query</button>
+            <button class="nav-button" onclick="location.href='report.html'">Go to Report Agent →</button>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <img src="images/4.png" alt="NLP Agent Logo" style="max-width: 150px; height: auto;">
+            <h2 style="color: var(--text-secondary);">NLP Agent</h2>
+        </div>
+
+        <div class="nlp-grid">
+            <div class="controls-panel">
+                <div class="control-group">
+                    <label for="taskType">NLP Task</label>
+                    <select id="taskType">
+                        <option value="ner">Named Entity Recognition</option>
+                        <option value="sentiment">Sentiment Analysis</option>
+                        <option value="classification">Text Classification</option>
+                        <option value="summarization">Text Summarization</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="inputText">Input Text</label>
+                    <textarea id="inputText" rows="6" placeholder="Enter text for analysis...">Eklavya Engines, based in Silicon Valley, announced a new AI platform today. CEO John Smith discussed the company's plans for expansion into Asian markets, particularly in Tokyo and Singapore.</textarea>
+                </div>
+
+                <div class="control-group">
+                    <label for="language">Language</label>
+                    <select id="language">
+                        <option value="en">English</option>
+                        <option value="es">Spanish</option>
+                        <option value="fr">French</option>
+                        <option value="de">German</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="models">Model Selection</label>
+                    <select id="models" multiple>
+                        <option value="bert">BERT</option>
+                        <option value="gpt">GPT</option>
+                        <option value="roberta">RoBERTa</option>
+                        <option value="xlnet">XLNet</option>
+                    </select>
+                </div>
+
+                <button class="button" onclick="analyzeText()">Analyze Text</button>
+                <button class="button" onclick="visualizeResults()">Visualize Results</button>
+                <button class="button" onclick="exportAnalysis()">Export Analysis</button>
+            </div>
+
+            <div class="analysis-panel">
+                <h3>Analysis Results</h3>
+                <pre id="analysisResults">No analysis results yet...</pre>
+                <div id="status" class="status"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function analyzeText() {
+            const status = document.getElementById('status');
+            const results = document.getElementById('analysisResults');
+            const taskType = document.getElementById('taskType').value;
+            
+            status.className = 'status';
+            status.textContent = 'Analyzing text...';
+            
+            setTimeout(() => {
+                let analysisResults;
+                
+                switch(taskType) {
+                    case 'ner':
+                        analysisResults = {
+                            "entities": [
+                                {"text": "Eklavya Engines", "type": "ORG", "confidence": 0.95},
+                                {"text": "Silicon Valley", "type": "LOC", "confidence": 0.92},
+                                {"text": "John Smith", "type": "PERSON", "confidence": 0.88},
+                                {"text": "Asian", "type": "LOC", "confidence": 0.85},
+                                {"text": "Tokyo", "type": "LOC", "confidence": 0.94},
+                                {"text": "Singapore", "type": "LOC", "confidence": 0.93}
+                            ]
+                        };
+                        break;
+                    case 'sentiment':
+                        analysisResults = {
+                            "sentiment": "positive",
+                            "confidence": 0.87,
+                            "scores": {
+                                "positive": 0.87,
+                                "neutral": 0.11,
+                                "negative": 0.02
+                            }
+                        };
+                        break;
+                    default:
+                        analysisResults = {
+                            "error": "Unsupported task type"
+                        };
+                }
+                
+                results.textContent = JSON.stringify(analysisResults, null, 2);
+                status.className = 'status success';
+                status.textContent = 'Analysis completed successfully!';
+            }, 1500);
+        }
+
+        function visualizeResults() {
+            const results = document.getElementById('analysisResults');
+            const text = document.getElementById('inputText').value;
+            
+            // Create a simple visualization of NER results
+            const entities = [
+                {text: "Eklavya Engines", type: "org"},
+                {text: "Silicon Valley", type: "location"},
+                {text: "John Smith", type: "person"},
+                {text: "Asian", type: "location"},
+                {text: "Tokyo", type: "location"},
+                {text: "Singapore", type: "location"}
+            ];
+            
+            let visualizedText = text;
+            entities.forEach(entity => {
+                visualizedText = visualizedText.replace(
+                    entity.text,
+                    `<span class="entity entity-${entity.type}">${entity.text}</span>`
+                );
+            });
+            
+            results.innerHTML = visualizedText;
+        }
+
+        function exportAnalysis() {
+            const status = document.getElementById('status');
+            status.className = 'status success';
+            status.textContent = 'Analysis exported successfully!';
+        }
+    </script>
+</body>
+</html>
